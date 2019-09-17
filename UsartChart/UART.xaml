@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="UsartChart.UART"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:UsartChart"
+             mc:Ignorable="d" Background="LightBlue" 
+             d:DesignHeight="40" d:DesignWidth="800">
+    <DockPanel VerticalAlignment="Center" Margin="5">
+        <ComboBox x:Name="PortName" VerticalContentAlignment="Center" Margin="0,0,5,0" MinWidth="100" ItemsSource="{Binding available_ports}"></ComboBox>
+        <ToggleButton MinWidth="40" IsChecked="{Binding IsOpen}">
+            <ToggleButton.Resources>
+                <Style TargetType="ToggleButton" x:Key="{x:Type ToggleButton}">
+                    <Style.Triggers>
+                        <Trigger Property="IsChecked" Value="true">
+                            <Setter Property="Background" Value="LightGreen"></Setter>
+                            <Setter Property="Foreground" Value="DarkGreen"></Setter>
+                            <Setter Property="Content" Value="关闭"></Setter>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="false">
+                            <Setter Property="Content" Value="打开"></Setter>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ToggleButton.Resources>
+        </ToggleButton>
+
+        <Label Margin="10,0,0,0">波特率</Label>
+        <TextBox MinWidth="100" VerticalContentAlignment="Center" Text="{Binding BaudRate}"></TextBox>
+
+        <TextBlock VerticalAlignment="Center" TextAlignment="Right" Text="{Binding Info}"></TextBlock>
+    </DockPanel>
+</UserControl>

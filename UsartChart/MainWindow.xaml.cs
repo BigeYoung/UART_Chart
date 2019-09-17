@@ -34,7 +34,6 @@ namespace UsartChart
         public void Dispose()
         {
             var vm = (SpeedTestVm)DataContext;
-            vm.Values.Dispose();
         }
 
         static readonly AxisSection SectionX = new AxisSection();

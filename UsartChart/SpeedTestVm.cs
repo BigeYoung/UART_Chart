@@ -1,4 +1,4 @@
-﻿using LiveCharts.Geared;
+﻿using LiveCharts;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,7 +17,7 @@ namespace UsartChart
 
         public SpeedTestVm()
         {
-            Values = new GearedValues<double>().WithQuality(Quality.Highest);
+            Values = new ChartValues<double>();
             ReadCommand = new RelayCommand(Read);
             StopCommand = new RelayCommand(Stop);
             CleaCommand = new RelayCommand(Clear);
@@ -30,7 +30,7 @@ namespace UsartChart
         public RelayCommand ReadCommand { get; set; }
         public RelayCommand StopCommand { get; set; }
         public RelayCommand CleaCommand { get; set; }
-        public GearedValues<double> Values { get; set; }
+        public ChartValues<double> Values { get; set; }
 
         public double Count
         {
