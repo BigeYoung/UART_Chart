@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO.Ports;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,7 +20,15 @@ namespace UsartChart
         {
             InitializeComponent();
             DataContext = this;
+            serial_port.Encoding = Encoding.UTF8;
+            serial_port.DataReceived += SerialPort_DataReceived;
             ScanPort();
+        }
+
+        private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            byte[] data = Encoding.UTF8.GetBytes(serial_port.ReadExisting());
+            
         }
 
         public bool IsOpen
@@ -56,7 +65,7 @@ namespace UsartChart
             set { serial_port.BaudRate = value; OnPropertyChanged(); }
         }
 
-        public SerialPort serial_port = new SerialPort(" ", 115200);
+        static public SerialPort serial_port = new SerialPort(" ", 115200);
 
         public List<string> available_ports { get; set; } = new List<string>();
 
@@ -85,7 +94,7 @@ namespace UsartChart
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

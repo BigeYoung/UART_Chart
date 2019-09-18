@@ -7,25 +7,22 @@
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="720" Width="960">
     <Window.DataContext>
         <local:SpeedTestVm></local:SpeedTestVm>
     </Window.DataContext>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-        </Grid.RowDefinitions>
-        <TextBlock TextWrapping="Wrap">Here we are adding a value every millisecond from 2 different tasks</TextBlock>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="15">
+    <DockPanel>
+        <local:UART DockPanel.Dock="Bottom"></local:UART>
+        <local:SelectSections DockPanel.Dock="Left" MinWidth="200"></local:SelectSections>
+        
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="15">
             <Button Command="{Binding ReadCommand}">Start Lecture</Button>
             <Button Command="{Binding StopCommand}">Stop</Button>
             <Button Command="{Binding CleaCommand}">Clear</Button>
             <TextBlock VerticalAlignment="Center" Margin="15 0" Text="{Binding Count, StringFormat=Buffer: {0}}"></TextBlock>
         </StackPanel>
-        <lvc:CartesianChart Grid.Row="2" DisableAnimations="True" Hoverable="False" Zoom="X" DataTooltip="{x:Null}"
+
+        <lvc:CartesianChart DisableAnimations="True" Hoverable="False" Zoom="X" DataTooltip="{x:Null}"
                             MouseEnter="ChartMouseEnter" MouseLeave="ChartMouseLeave" MouseMove="ChartMouseMoving">
             <lvc:CartesianChart.Resources>
                 <Style TargetType="lvc:LineSeries">
@@ -44,6 +41,5 @@
                 <lvc:Axis x:Name="m_AxisY" LabelFormatter="{Binding Formatter}"/>
             </lvc:CartesianChart.AxisY>
         </lvc:CartesianChart>
-        <local:UART ></local:UART>
-    </Grid>
+    </DockPanel>
 </Window>

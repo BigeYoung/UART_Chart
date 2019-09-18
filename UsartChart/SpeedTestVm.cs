@@ -68,7 +68,7 @@ namespace UsartChart
 
             //lets keep in memory only the last 20000 records,
             //to keep everything running faster
-            const int keepRecords = 20000;
+            const int keepRecords = 10000;
             IsReading = true;
 
             while (IsReading)

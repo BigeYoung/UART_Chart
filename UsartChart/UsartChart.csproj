@@ -68,6 +68,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="RlayCommand.cs" />
+    <Compile Include="Section.cs" />
+    <Compile Include="SelectSections.xaml.cs">
+      <DependentUpon>SelectSections.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SpeedTestVm.cs" />
     <Compile Include="UART.xaml.cs">
       <DependentUpon>UART.xaml</DependentUpon>
@@ -105,6 +109,10 @@
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SelectSections.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UART.xaml">
       <SubType>Designer</SubType>
