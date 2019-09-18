@@ -6,15 +6,13 @@
              xmlns:local="clr-namespace:UsartChart"
              mc:Ignorable="d" Background="White" 
              d:DesignHeight="240" d:DesignWidth="240">
-    <Grid Margin="10">
-        <StackPanel>
-            <Label>串口号</Label>
-            <ComboBox x:Name="PortName" MinHeight="28" VerticalContentAlignment="Center" 
+    <StackPanel Margin="10">
+        <Label>串口号</Label>
+        <ComboBox x:Name="PortName" Height="28" VerticalContentAlignment="Center" 
                   ItemsSource="{Binding available_ports}"></ComboBox>
-            <Label Margin="0,10,0,0">波特率</Label>
-            <TextBox MinHeight="28" VerticalContentAlignment="Center" Text="{Binding BaudRate}"></TextBox>
-        </StackPanel>
-        <ToggleButton MinHeight="28" IsChecked="{Binding IsOpen}" VerticalAlignment="Bottom">
+        <Label Margin="0,10,0,0">波特率</Label>
+        <TextBox Height="28" VerticalContentAlignment="Center" Text="{Binding BaudRate}"></TextBox>
+        <ToggleButton Height="28" Margin="0,10" IsChecked="{Binding IsOpen}" VerticalAlignment="Bottom">
             <ToggleButton.Resources>
                 <Style TargetType="ToggleButton" x:Key="{x:Type ToggleButton}">
                     <Style.Triggers>
@@ -29,5 +27,5 @@
                 </Style>
             </ToggleButton.Resources>
         </ToggleButton>
-    </Grid>
+    </StackPanel>
 </UserControl>

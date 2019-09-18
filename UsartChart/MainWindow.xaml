@@ -5,18 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UsartChart"
         mc:Ignorable="d"
-        Title="MainWindow" Height="720" Width="960">
+        Title="MainWindow" Height="720" Width="1080">
     <Window.DataContext>
         <local:SpeedTestVm></local:SpeedTestVm>
     </Window.DataContext>
     <DockPanel>
         <local:StatusBar x:Name="m_StatusBar" DockPanel.Dock="Bottom" Height="28"></local:StatusBar>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
 
-        <StackPanel DockPanel.Dock="Left">
-            <local:UART></local:UART>
-            <local:SelectSections Width="240"></local:SelectSections>
-        </StackPanel>
-        <local:Chart></local:Chart>
+            <DockPanel DockPanel.Dock="Left">
+                <local:UART DockPanel.Dock="Top"></local:UART>
+                <local:SelectSections></local:SelectSections>
+            </DockPanel>
+            <local:Chart Grid.Column="1"></local:Chart>
+        </Grid>
         
     </DockPanel>
 </Window>
