@@ -20,10 +20,10 @@ namespace UsartChart
     }
     public class Section
     {
-        public bool read { get; set; }
-        public string name { get; set; }
-        public SectionType type { get; set; }
-        public long address { get; set; }
-        public UInt16 length { get; set; }
+        public bool Read { get; set; }
+        public string Name { get; set; }
+        public SectionType Type { get; set; }
+        public long Addr { get; set; }
+        public ushort Length { get; set; }
     }
 }

@@ -20,7 +20,6 @@ namespace UsartChart
         {
             InitializeComponent();
             DataContext = this;
-            serial_port.Encoding = Encoding.UTF8;
             serial_port.DataReceived += SerialPort_DataReceived;
             ScanPort();
         }
@@ -65,26 +64,29 @@ namespace UsartChart
             set { serial_port.BaudRate = value; OnPropertyChanged(); }
         }
 
-        static public SerialPort serial_port = new SerialPort(" ", 115200);
+        static public SerialPort serial_port = new SerialPort(" ", 115200)
+        {
+            Encoding = Encoding.UTF8
+        };
 
-        public List<string> available_ports { get; set; } = new List<string>();
+        public List<string> AvailablePorts { get; set; } = new List<string>();
 
         async void ScanPort()
         {
             while (true)
             {
-                var _available_ports = SerialPort.GetPortNames();
-                if (!available_ports.SequenceEqual(_available_ports))
+                var available_ports = SerialPort.GetPortNames();
+                if (!AvailablePorts.SequenceEqual(available_ports))
                 {
-                    foreach (var item in _available_ports)
-                    {
-                        if (!available_ports.Contains(item))
-                            available_ports.Add(item);
-                    }
                     foreach (var item in available_ports)
                     {
-                        if (!_available_ports.Contains(item))
-                            available_ports.Remove(item);
+                        if (!AvailablePorts.Contains(item))
+                            AvailablePorts.Add(item);
+                    }
+                    foreach (var item in AvailablePorts)
+                    {
+                        if (!available_ports.Contains(item))
+                            AvailablePorts.Remove(item);
                     }
                 }
                 OnPropertyChanged("available_ports");
