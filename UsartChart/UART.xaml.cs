@@ -27,7 +27,7 @@ namespace UsartChart
         private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             byte[] data = Encoding.UTF8.GetBytes(serial_port.ReadExisting());
-            
+
         }
 
         public bool IsOpen
@@ -88,8 +88,8 @@ namespace UsartChart
                         if (!available_ports.Contains(item))
                             AvailablePorts.Remove(item);
                     }
+                    OnPropertyChanged("AvailablePorts");
                 }
-                OnPropertyChanged("available_ports");
                 OnPropertyChanged("IsOpen");
                 await Task.Delay(200);
             }
