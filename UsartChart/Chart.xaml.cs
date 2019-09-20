@@ -40,7 +40,7 @@ namespace UsartChart
 
         public void Dispose()
         {
-            var vm = (SpeedTestVm)DataContext;
+            _ = (SpeedTestVm)DataContext;
         }
 
         static readonly AxisSection SectionX = new AxisSection();

@@ -27,7 +27,7 @@ namespace UsartChart
         public SelectSections()
         {
             InitializeComponent();
-            m_DataGrid.ItemsSource = sections;
+            m_ListBox.ItemsSource = sections;
         }
 
         public ObservableCollection<Section> sections = new ObservableCollection<Section>();
@@ -114,6 +114,78 @@ namespace UsartChart
                 default:
                     return SectionType.UNKNOWN;
             }
+        }
+    }
+
+    [ValueConversion(typeof(SectionType), typeof(SolidColorBrush))]
+    public class TypeHighlight : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            SectionType type = (SectionType)value;
+            switch (type)
+            {
+                case SectionType.UNKNOWN:
+                    return Brushes.Red;
+                case SectionType.INT8:
+                case SectionType.INT16:
+                case SectionType.INT32:
+                    return Brushes.DarkSlateBlue;
+                case SectionType.UINT8:
+                case SectionType.UINT16:
+                case SectionType.UINT32:
+                    return Brushes.DarkGoldenrod;
+                case SectionType.Float:
+                case SectionType.Double:
+                    return Brushes.Indigo;
+                default:
+                    return Brushes.DarkGray;
+            }
+
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return null;
+        }
+    }
+
+
+    [ValueConversion(typeof(SectionType), typeof(string))]
+    public class TypeName : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            SectionType type = (SectionType)value;
+            switch (type)
+            {
+                case SectionType.UNKNOWN:
+                    return "???";
+                case SectionType.INT8:
+                    return "int8_t";
+                case SectionType.INT16:
+                    return "int16_t";
+                case SectionType.INT32:
+                    return "int32_t";
+                case SectionType.UINT8:
+                    return "uint8_t";
+                case SectionType.UINT16:
+                    return "uint16_t";
+                case SectionType.UINT32:
+                    return "uint32_t";
+                case SectionType.Float:
+                    return "float";
+                case SectionType.Double:
+                    return "double";
+                default:
+                    return "???";
+            }
+
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return null;
         }
     }
 }

@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="1080">
     <Window.DataContext>
-        <local:SpeedTestVm></local:SpeedTestVm>
+        <local:LineSerials></local:LineSerials>
     </Window.DataContext>
     <DockPanel>
         <local:StatusBar x:Name="m_StatusBar" DockPanel.Dock="Bottom" Height="28"></local:StatusBar>

@@ -70,12 +70,12 @@
     <Compile Include="Chart.xaml.cs">
       <DependentUpon>Chart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LineSerials.cs" />
     <Compile Include="RlayCommand.cs" />
     <Compile Include="Section.cs" />
     <Compile Include="SelectSections.xaml.cs">
       <DependentUpon>SelectSections.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SpeedTestVm.cs" />
     <Compile Include="StatusBar.xaml.cs">
       <DependentUpon>StatusBar.xaml</DependentUpon>
     </Compile>
