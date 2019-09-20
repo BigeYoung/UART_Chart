@@ -19,12 +19,12 @@ namespace UsartChart
             Formatter = x => x.ToString("F0");
         }
 
-        public void Update(List<Tuple<Section, double>> dataList)
+        public void Update(Dictionary<Section, double> dataDictionary)
         {
-            foreach (var data in dataList)
+            foreach (var data in dataDictionary)
             {
-                var section = data.Item1;
-                var value = data.Item2;
+                var section = data.Key;
+                var value = data.Value;
                 if (!SeriesDictionary.ContainsKey(section))
                     AddSeries(section);
                 ChartValues<double> Values = (ChartValues<double>)SeriesDictionary[section].Values;
@@ -33,14 +33,12 @@ namespace UsartChart
                 if (Values.Count > MAX_COUNT - 1) Values.Remove(first);
                 if (Values.Count < MAX_COUNT) Values.Add(value);
             }
-            if (dataList.Count != SeriesDictionary.Count)
+            if (dataDictionary.Count != SeriesDictionary.Count)
             {
                 foreach (var series in SeriesDictionary)
                 {
-                    if (!dataList.Where(x=>x.Item1 == series.Key).Any())
-                    {
+                    if (!dataDictionary.ContainsKey(series.Key))
                         DeleteSeries(series.Key);
-                    }
                 }
             }
         }

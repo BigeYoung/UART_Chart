@@ -3,6 +3,7 @@ using LiveCharts.Helpers;
 using LiveCharts.Wpf;
 using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Ports;
@@ -29,7 +30,6 @@ namespace UsartChart
             UART.m_SerialPort.DataReceived += SerialPort_DataRecieved;
             m_Chart.DataContext = m_SubSeries;
             Subscription.DataContext = m_SubSeries;
-            m_SubSeries.AddSeries(new Section() { Addr = 0, Name = "happy", Size = 4, Type = SectionType.Double });
         }
 
         public SubSeries m_SubSeries = new SubSeries();
@@ -37,9 +37,18 @@ namespace UsartChart
         private void SerialPort_DataRecieved(object sender, SerialDataReceivedEventArgs e)
         {
             UART.m_SerialPort.ReadExisting();
-            // TODO
-            // UART.解析()
-            // if (sections.First(...)!=null)
+            Dictionary<Section, double> data_dict = new Dictionary<Section, double>();
+
+            //TODO while(...):
+            //TODO 解析...
+            uint addr = 0x00; //TODO 读取串口获得
+            var section = sections.First((x) => x.Addr == addr);
+            //TODO 根据 section.Type 解析
+            double value = 0.0; //TODO 读取串口获得
+            data_dict.Add(section, value);
+            //TODO endwhile
+
+            m_SubSeries.Update(data_dict);
         }
 
         static readonly AxisSection SectionX = new AxisSection()

@@ -69,6 +69,7 @@
     <Compile Include="RlayCommand.cs" />
     <Compile Include="Section.cs" />
     <Compile Include="Status.cs" />
+    <Compile Include="Tupple.cs" />
     <Compile Include="UART.cs" />
   </ItemGroup>
   <ItemGroup>

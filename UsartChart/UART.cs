@@ -46,8 +46,8 @@ namespace UsartChart
 
         public static void Subscript(uint address, ushort size)
         {
-            MessageBox.Show("0x" + address.ToString("X") + " has been subscript.");
             //TODO 订阅对应地址
+            MessageBox.Show("0x" + address.ToString("X") + " has been subscript.");
         }
         public static void Unsubscript(uint address)
         {
