@@ -6,7 +6,20 @@
         xmlns:local="clr-namespace:UsartChart"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="720" Width="1080">
+        Title="MainWindow" Height="720" Width="1280">
+    <Window.Resources>
+        <Style TargetType="Label" x:Key="h1">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="VerticalContentAlignment" Value="Bottom"/>
+        </Style>
+        <Style TargetType="Button" x:Key="{x:Type Button}">
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+        <local:TypeHighlight x:Key="TypeHightlight"/>
+        <local:TypeName x:Key="TypeName"/>
+    </Window.Resources>
     <DockPanel>
         <Grid Background="LightGray" DockPanel.Dock="Bottom" Height="28">
             <TextBlock VerticalAlignment="Center" Margin="10,0"></TextBlock>
@@ -14,75 +27,85 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
-            <DockPanel DockPanel.Dock="Left">
+            <DockPanel Margin="10">
+                <DockPanel.Resources>
+                    <DataTemplate x:Key="SectionTemplate">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Command="{Binding SubscriptCMD}" Content="订阅" Padding="3"/>
+                            <TextBlock Margin="5,0" VerticalAlignment="Center"
+                                   Text="{Binding Type, Converter={StaticResource TypeName}}" 
+                                   Foreground="{Binding Type,Converter={StaticResource TypeHightlight}}"/>
+                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </DockPanel.Resources>
+                <DockPanel DockPanel.Dock="Top">
+                    <Button DockPanel.Dock="Right" Click="SelectELF_Click">读取文件</Button>
+                    <Label Style="{StaticResource h1}">ELF文件</Label>
+                </DockPanel>
+                <ListBox x:Name="ELF_ListBox" ItemsSource="{Binding}" ItemTemplate="{StaticResource SectionTemplate}"
+                         Margin="0,10,0,0"/>
+            </DockPanel>
+            <DockPanel Grid.Column="1">
                 <StackPanel Margin="10" DockPanel.Dock="Top">
                     <StackPanel.DataContext>
                         <local:UART x:Name="m_UART"/>
                     </StackPanel.DataContext>
-                    <Label>串口号</Label>
+                    <DockPanel DockPanel.Dock="Top">
+                        <ToggleButton DockPanel.Dock="Right" IsChecked="{Binding serial_port.IsOpen}">
+                            <ToggleButton.Resources>
+                                <Style TargetType="ToggleButton" x:Key="{x:Type ToggleButton}">
+                                    <Setter Property="Padding" Value="5"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsChecked" Value="true">
+                                            <Setter Property="Foreground" Value="DarkGreen"></Setter>
+                                            <Setter Property="Content" Value="关闭串口"></Setter>
+                                        </Trigger>
+                                        <Trigger Property="IsChecked" Value="false">
+                                            <Setter Property="Content" Value="打开串口"></Setter>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ToggleButton.Resources>
+                        </ToggleButton>
+                        <Label Style="{StaticResource h1}">串口</Label>
+                    </DockPanel>
+                    <Label Margin="0,10,0,0">串口号</Label>
                     <ComboBox x:Name="PortName" Height="28" VerticalContentAlignment="Center" 
                                 ItemsSource="{Binding AvailablePorts}" Text="{Binding PortName, Mode=OneWayToSource}"></ComboBox>
                     <Label Margin="0,10,0,0">波特率</Label>
                     <TextBox Height="28" VerticalContentAlignment="Center" Text="{Binding BaudRate}"></TextBox>
-                    <ToggleButton Height="28" Margin="0,10" IsChecked="{Binding serial_port.IsOpen}" VerticalAlignment="Bottom">
-                        <ToggleButton.Resources>
-                            <Style TargetType="ToggleButton" x:Key="{x:Type ToggleButton}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsChecked" Value="true">
-                                        <Setter Property="Foreground" Value="DarkGreen"></Setter>
-                                        <Setter Property="Content" Value="关闭"></Setter>
-                                    </Trigger>
-                                    <Trigger Property="IsChecked" Value="false">
-                                        <Setter Property="Content" Value="打开"></Setter>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ToggleButton.Resources>
-                    </ToggleButton>
                 </StackPanel>
-                <DockPanel Margin="10">
+                <DockPanel Margin="10" x:Name="Subscription">
                     <DockPanel.Resources>
-                        <local:TypeHighlight x:Key="TypeHightlight"/>
-                        <local:TypeName x:Key="TypeName"/>
                         <DataTemplate x:Key="SectionTemplate">
                             <StackPanel Orientation="Horizontal">
-                                <CheckBox IsChecked="{Binding Read}"/>
-                                <TextBlock Margin="10,0"
-                           Text="{Binding Type, Converter={StaticResource TypeName}}" 
-                           Foreground="{Binding Type,Converter={StaticResource TypeHightlight}}"/>
-                                <TextBlock Text="{Binding Name}"/>
+                                <Button Command="{Binding Key.UnsubscriptCMD}" Content="取消" Padding="3"/>
+                                <TextBlock Margin="5,0" VerticalAlignment="Center"
+                                   Text="{Binding Key.Type, Converter={StaticResource TypeName}}" 
+                                   Foreground="{Binding Key.Type,Converter={StaticResource TypeHightlight}}"/>
+                                <TextBlock Text="{Binding Key.Name}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </DataTemplate>
                     </DockPanel.Resources>
-                    <Button MinHeight="28" Margin="0,10" DockPanel.Dock="Top" Click="SelectELF_Click">读取elf文件</Button>
-                    <ListBox x:Name="m_ListBox" ItemsSource="{Binding}"
-                            ItemTemplate="{StaticResource SectionTemplate}"/>
+                    <Label DockPanel.Dock="Top" Style="{StaticResource h1}">已订阅变量</Label>
+                    <ListBox ItemsSource="{Binding SeriesDictionary}" ItemTemplate="{StaticResource SectionTemplate}"
+                             Margin="0,10,0,0"/>
                 </DockPanel>
             </DockPanel>
-            <DockPanel Grid.Column="1">
-                <DockPanel.DataContext>
-                    <local:SectionSeries x:Name="m_SectionSeries"/>
-                </DockPanel.DataContext>
-                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="15">
-                    <Button Command="{Binding ReadCommand}">Start Lecture</Button>
-                    <Button Command="{Binding StopCommand}">Stop</Button>
-                    <Button Command="{Binding CleaCommand}">Clear</Button>
-                    <TextBlock VerticalAlignment="Center" Margin="15 0" Text="{Binding Count, StringFormat=Buffer: {0}}"></TextBlock>
-                </StackPanel>
-
-                <lvc:CartesianChart Grid.Row="1" Zoom="X" DisableAnimations="True"
+            <lvc:CartesianChart x:Name="m_Chart" Grid.Row="1" Zoom="X" DisableAnimations="True" Margin="10" Grid.Column="2"
                                     Series="{Binding Series}" DataTooltip="{x:Null}" Hoverable="False"
                                     MouseEnter="ChartMouseEnter" MouseLeave="ChartMouseLeave" MouseMove="ChartMouseMoving">
-                    <lvc:CartesianChart.AxisX>
-                        <lvc:Axis x:Name="m_AxisX" LabelFormatter="{Binding Formatter}"/>
-                    </lvc:CartesianChart.AxisX>
-                    <lvc:CartesianChart.AxisY>
-                        <lvc:Axis x:Name="m_AxisY" LabelFormatter="{Binding Formatter}"/>
-                    </lvc:CartesianChart.AxisY>
-                </lvc:CartesianChart>
-            </DockPanel>
+                <lvc:CartesianChart.AxisX>
+                    <lvc:Axis x:Name="m_AxisX" LabelFormatter="{Binding Formatter}"/>
+                </lvc:CartesianChart.AxisX>
+                <lvc:CartesianChart.AxisY>
+                    <lvc:Axis x:Name="m_AxisY" LabelFormatter="{Binding Formatter}"/>
+                </lvc:CartesianChart.AxisY>
+            </lvc:CartesianChart>
         </Grid>
 
     </DockPanel>

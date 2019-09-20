@@ -65,7 +65,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SectionSeries.cs" />
+    <Compile Include="SubSeries.cs" />
     <Compile Include="RlayCommand.cs" />
     <Compile Include="Section.cs" />
     <Compile Include="Status.cs" />

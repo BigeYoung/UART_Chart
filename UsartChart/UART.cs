@@ -19,7 +19,6 @@ namespace UsartChart
     {
         public UART()
         {
-            serial_port.DataReceived += SerialPort_DataReceived;
             ScanPort();
         }
 
@@ -29,12 +28,6 @@ namespace UsartChart
             RM_BOARD_2 = 0x02,
             RM_BOARD_3 = 0x03
         };
-
-        private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
-            byte[] data = Encoding.UTF8.GetBytes(serial_port.ReadLine());
-            // 读取
-        }
 
         private void SerialPort_Operate_Flash(byte board, byte act, byte size, uint addr, ulong dataBuf = 0)
         {
@@ -48,28 +41,30 @@ namespace UsartChart
             data[2] = size;
             Array.Copy(reAddr, 0, data, 3, 4);
             Array.Copy(reDataBuf, 0, data, 7, 8);
-            serial_port.WriteLine(System.Text.Encoding.UTF8.GetString(data));
+            m_SerialPort.WriteLine(System.Text.Encoding.UTF8.GetString(data));
         }
 
-        public void Subscription(uint address)
+        public static void Subscript(uint address, ushort size)
         {
+            MessageBox.Show("0x" + address.ToString("X") + " has been subscript.");
             //TODO 订阅对应地址
         }
-        public void Unsubscription(uint address)
+        public static void Unsubscript(uint address)
         {
             //TODO 取消订阅对应地址
+            MessageBox.Show("0x" + address.ToString("X") + " has been unsubscript.");
         }
 
         public string PortName
         {
             get
             {
-                return serial_port.PortName;
+                return m_SerialPort.PortName;
             }
             set
             {
 
-                serial_port.PortName = value == "" ? " " : value;
+                m_SerialPort.PortName = value == "" ? " " : value;
             }
         }
 
@@ -77,20 +72,20 @@ namespace UsartChart
         {
             get
             {
-                return serial_port.IsOpen;
+                return m_SerialPort.IsOpen;
             }
             set
             {
-                if (value == serial_port.IsOpen)
+                if (value == m_SerialPort.IsOpen)
                     return;
                 try
                 {
                     if (value)
                     {
-                        serial_port.Open();
+                        m_SerialPort.Open();
                     }
                     else
-                        serial_port.Close();
+                        m_SerialPort.Close();
                 }
                 catch (Exception e)
                 {
@@ -102,11 +97,11 @@ namespace UsartChart
 
         public int BaudRate
         {
-            get { return serial_port.BaudRate; }
-            set { serial_port.BaudRate = value; OnPropertyChanged(); }
+            get { return m_SerialPort.BaudRate; }
+            set { m_SerialPort.BaudRate = value; OnPropertyChanged(); }
         }
 
-        static public SerialPort serial_port = new SerialPort(" ", 115200)
+        static public SerialPort m_SerialPort = new SerialPort(" ", 115200)
         {
             Encoding = Encoding.UTF8
         };
@@ -137,18 +132,10 @@ namespace UsartChart
             }
         }
 
-        public ObservableCollection<Section> sections;
-
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public event EventHandler<Tuple<uint, double>> RecieveValue;
-        private void OnRecieveValue(uint address, double value)
-        {
-            RecieveValue?.Invoke(this, new Tuple<uint, double>(address, value));
         }
     }
 }

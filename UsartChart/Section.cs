@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,11 +23,59 @@ namespace UsartChart
     }
     public class Section
     {
-        public bool Read { get; set; }
+        public Section()
+        {
+            SubscriptCMD = new RelayCommand(() => UART.Subscript(Addr, Size));
+            UnsubscriptCMD = new RelayCommand(() => UART.Unsubscript(Addr));
+        }
+        public RelayCommand SubscriptCMD { get; set; }
+        public RelayCommand UnsubscriptCMD { get; set; }
+
         public SectionType Type { get; set; }
         public string Name { get; set; }
         public uint Addr { get; set; }
         public ushort Size { get; set; }
+
+        public static SectionType TypeParse(string s)
+        {
+            if (s.StartsWith("volatile "))
+            {
+                s.Remove(0, "volatile ".Length);
+            }
+            switch (s)
+            {
+                case "uint8_t":
+                    return SectionType.UINT8;
+                case "uint16_t":
+                    return SectionType.UINT16;
+                case "uint32_t":
+                    return SectionType.UINT32;
+                case "int8_t":
+                    return SectionType.INT8;
+                case "int16_t":
+                    return SectionType.INT16;
+                case "int32_t":
+                    return SectionType.INT32;
+                case "unsigned char":
+                    return SectionType.UINT8;
+                case "short unsigned int":
+                    return SectionType.UINT16;
+                case "unsigned int":
+                    return SectionType.UINT32;
+                case "char":
+                    return SectionType.INT8;
+                case "short int":
+                    return SectionType.INT16;
+                case "int":
+                    return SectionType.INT32;
+                case "float":
+                    return SectionType.Float;
+                case "double":
+                    return SectionType.Double;
+                default:
+                    return SectionType.UNKNOWN;
+            }
+        }
     }
 
 

@@ -5,6 +5,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.IO.Ports;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -24,31 +25,39 @@ namespace UsartChart
         public MainWindow()
         {
             InitializeComponent();
-            SectionX.DataLabel = true;
-            SectionX.StrokeThickness = 1;
-            SectionX.Stroke = Brushes.Orange;
-            SectionX.DisableAnimations = true;
-            SectionX.DataLabelForeground = Brushes.White;
-
-            SectionY.DataLabel = true;
-            SectionY.StrokeThickness = 1;
-            SectionY.Stroke = Brushes.Orange;
-            SectionY.DisableAnimations = true;
-            SectionY.DataLabelForeground = Brushes.White;
-
-            m_UART.RecieveValue += (_, pair) =>
-            {
-                if (sections.First(x => x.Addr == pair.Item1) != null)
-                    m_SectionSeries.AddValue(pair.Item1, pair.Item2);
-            };
-
-            DataContext = this;
-
-            m_ListBox.DataContext = sections;
+            ELF_ListBox.DataContext = sections;
+            UART.m_SerialPort.DataReceived += SerialPort_DataRecieved;
+            m_Chart.DataContext = m_SubSeries;
+            Subscription.DataContext = m_SubSeries;
+            m_SubSeries.AddSeries(new Section() { Addr = 0, Name = "happy", Size = 4, Type = SectionType.Double });
         }
 
-        static readonly AxisSection SectionX = new AxisSection();
-        static readonly AxisSection SectionY = new AxisSection();
+        public SubSeries m_SubSeries = new SubSeries();
+
+        private void SerialPort_DataRecieved(object sender, SerialDataReceivedEventArgs e)
+        {
+            UART.m_SerialPort.ReadExisting();
+            // TODO
+            // UART.解析()
+            // if (sections.First(...)!=null)
+        }
+
+        static readonly AxisSection SectionX = new AxisSection()
+        {
+            DataLabel = true,
+            StrokeThickness = 1,
+            Stroke = Brushes.Orange,
+            DisableAnimations = true,
+            DataLabelForeground = Brushes.White
+        };
+        static readonly AxisSection SectionY = new AxisSection()
+        {
+            DataLabel = true,
+            StrokeThickness = 1,
+            Stroke = Brushes.Orange,
+            DisableAnimations = true,
+            DataLabelForeground = Brushes.White
+        };
 
         private void ChartMouseEnter(object sender, MouseEventArgs e)
         {
@@ -105,17 +114,17 @@ namespace UsartChart
                         try
                         {
                             string[] s_list = Regex.Split(s, @"\s{2,}");
-                            var type = SectionTypeParse(s_list[3]);
+                            var type = Section.TypeParse(s_list[3]);
                             if (type == SectionType.UNKNOWN)
                                 continue;
-                            sections.Add(new Section()
+                            var section = new Section()
                             {
                                 Addr = Convert.ToUInt32(s_list[0], 16),
                                 Size = Convert.ToUInt16(s_list[1], 16),
                                 Name = s_list[2],
-                                Type = type,
-                                Read = false
-                            });
+                                Type = type
+                            };
+                            sections.Add(section);
                         }
                         catch (Exception exp)
                         {
@@ -124,47 +133,6 @@ namespace UsartChart
                         }
                     }
                 }
-            }
-        }
-
-        private SectionType SectionTypeParse(string s)
-        {
-            if (s.StartsWith("volatile "))
-            {
-                s.Remove(0, "volatile ".Length);
-            }
-            switch (s)
-            {
-                case "uint8_t":
-                    return SectionType.UINT8;
-                case "uint16_t":
-                    return SectionType.UINT16;
-                case "uint32_t":
-                    return SectionType.UINT32;
-                case "int8_t":
-                    return SectionType.INT8;
-                case "int16_t":
-                    return SectionType.INT16;
-                case "int32_t":
-                    return SectionType.INT32;
-                case "unsigned char":
-                    return SectionType.UINT8;
-                case "short unsigned int":
-                    return SectionType.UINT16;
-                case "unsigned int":
-                    return SectionType.UINT32;
-                case "char":
-                    return SectionType.INT8;
-                case "short int":
-                    return SectionType.INT16;
-                case "int":
-                    return SectionType.INT32;
-                case "float":
-                    return SectionType.Float;
-                case "double":
-                    return SectionType.Double;
-                default:
-                    return SectionType.UNKNOWN;
             }
         }
 
