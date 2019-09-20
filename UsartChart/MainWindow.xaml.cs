@@ -2,6 +2,7 @@
 using LiveCharts.Helpers;
 using LiveCharts.Wpf;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -21,5 +22,8 @@ namespace UsartChart
 
             s_StatusBar = m_StatusBar;
         }
+
+        // var line_serials = (LineSerials)m_Chart.DataContext;
+
     }
 }

@@ -23,6 +23,7 @@ namespace UsartChart
         {
             SectionDictionary.Add(section_name, new LineSeries
             {
+                Values = new ChartValues<double>(),
                 Fill = Brushes.Transparent,
                 StrokeThickness = .5,
                 PointGeometry = null
@@ -38,6 +39,8 @@ namespace UsartChart
 
         public void AddValue(string section_name, double value)
         {
+            if (!SectionDictionary.ContainsKey(section_name))
+                AddSeries(section_name);
             ChartValues<double> Values = (ChartValues<double>)SectionDictionary[section_name].Values;
             Values.Add(value);
             var first = Values.DefaultIfEmpty(0).FirstOrDefault();
