@@ -15,23 +15,25 @@ namespace UsartChart
     /// <summary>
     /// UART.xaml 的交互逻辑
     /// </summary>
-    public partial class UART : UserControl, INotifyPropertyChanged
+    public partial class UART : INotifyPropertyChanged
     {
         public UART()
         {
-            InitializeComponent();
-            DataContext = this;
             serial_port.DataReceived += SerialPort_DataReceived;
             ScanPort();
         }
 
-        private const byte RM_BOARD_1 = 0x01;
-        private const byte RM_BOARD_2 = 0x02;
-        private const byte RM_BOARD_3 = 0x03;
+        private enum RM_BOARD : byte
+        {
+            RM_BOARD_1 = 0x01,
+            RM_BOARD_2 = 0x02,
+            RM_BOARD_3 = 0x03
+        };
 
         private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             byte[] data = Encoding.UTF8.GetBytes(serial_port.ReadLine());
+            // 读取
         }
 
         private void SerialPort_Operate_Flash(byte board, byte act, byte size, uint addr, ulong dataBuf = 0)
@@ -49,6 +51,28 @@ namespace UsartChart
             serial_port.WriteLine(System.Text.Encoding.UTF8.GetString(data));
         }
 
+        public void Subscription(uint address)
+        {
+            //TODO 订阅对应地址
+        }
+        public void Unsubscription(uint address)
+        {
+            //TODO 取消订阅对应地址
+        }
+
+        public string PortName
+        {
+            get
+            {
+                return serial_port.PortName;
+            }
+            set
+            {
+
+                serial_port.PortName = value == "" ? " " : value;
+            }
+        }
+
         public bool IsOpen
         {
             get
@@ -63,7 +87,6 @@ namespace UsartChart
                 {
                     if (value)
                     {
-                        serial_port.PortName = PortName.Text;
                         serial_port.Open();
                     }
                     else

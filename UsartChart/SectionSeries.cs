@@ -11,9 +11,9 @@ using System.Windows.Media;
 
 namespace UsartChart
 {
-    public class LineSerials : INotifyPropertyChanged
+    public class SectionSeries : INotifyPropertyChanged
     {
-        public LineSerials()
+        public SectionSeries()
         {
             Series = new SeriesCollection();
             Formatter = x => x.ToString("F0");
