@@ -31,7 +31,6 @@ namespace UsartChart
         private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             byte[] data = Encoding.UTF8.GetBytes(serial_port.ReadLine());
-            
         }
 
         private void SerialPort_Operate_Flash(byte board, byte act, byte size, uint addr, ulong dataBuf = 0)
@@ -107,8 +106,8 @@ namespace UsartChart
                         if (!available_ports.Contains(item))
                             AvailablePorts.Remove(item);
                     }
+                    OnPropertyChanged("AvailablePorts");
                 }
-                OnPropertyChanged("available_ports");
                 OnPropertyChanged("IsOpen");
                 await Task.Delay(200);
             }

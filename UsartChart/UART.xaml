@@ -9,7 +9,7 @@
     <StackPanel Margin="10">
         <Label>串口号</Label>
         <ComboBox x:Name="PortName" Height="28" VerticalContentAlignment="Center" 
-                  ItemsSource="{Binding available_ports}"></ComboBox>
+                  ItemsSource="{Binding AvailablePorts}"></ComboBox>
         <Label Margin="0,10,0,0">波特率</Label>
         <TextBox Height="28" VerticalContentAlignment="Center" Text="{Binding BaudRate}"></TextBox>
         <ToggleButton Height="28" Margin="0,10" IsChecked="{Binding IsOpen}" VerticalAlignment="Bottom">
