@@ -15,10 +15,10 @@
             </Grid.ColumnDefinitions>
 
             <DockPanel DockPanel.Dock="Left">
-                <local:UART DockPanel.Dock="Top"></local:UART>
-                <local:SelectSections></local:SelectSections>
+                <local:UART x:Name="m_UART" DockPanel.Dock="Top"/>
+                <local:SelectSections x:Name="m_SelectSections"/>
             </DockPanel>
-            <local:Chart x:Name="m_Chart" Grid.Column="1"></local:Chart>
+            <local:Chart x:Name="m_Chart" Grid.Column="1"/>
         </Grid>
         
     </DockPanel>

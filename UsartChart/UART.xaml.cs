@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO.Ports;
 using System.Linq;
@@ -113,11 +114,18 @@ namespace UsartChart
             }
         }
 
+        public ObservableCollection<Section> sections;
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        public event EventHandler<Tuple<uint, double>> RecieveValue;
+        private void OnRecieveValue(uint address, double value)
+        {
+            RecieveValue?.Invoke(this, new Tuple<uint, double>(address, value));
+        }
     }
 }

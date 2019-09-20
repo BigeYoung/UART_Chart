@@ -19,29 +19,29 @@ namespace UsartChart
             Formatter = x => x.ToString("F0");
         }
 
-        public void AddSeries(string section_name)
+        public void AddSeries(uint address)
         {
-            SectionDictionary.Add(section_name, new LineSeries
+            SectionDictionary.Add(address, new LineSeries
             {
                 Values = new ChartValues<double>(),
                 Fill = Brushes.Transparent,
                 StrokeThickness = .5,
                 PointGeometry = null
             });
-            Series.Add(SectionDictionary[section_name]);
+            Series.Add(SectionDictionary[address]);
         }
 
-        public void DeleteSeries(string section_name)
+        public void DeleteSeries(uint address)
         {
-            SectionDictionary.Remove(section_name);
-            Series.Remove(SectionDictionary[section_name]);
+            SectionDictionary.Remove(address);
+            Series.Remove(SectionDictionary[address]);
         }
 
-        public void AddValue(string section_name, double value)
+        public void AddValue(uint address, double value)
         {
-            if (!SectionDictionary.ContainsKey(section_name))
-                AddSeries(section_name);
-            ChartValues<double> Values = (ChartValues<double>)SectionDictionary[section_name].Values;
+            if (!SectionDictionary.ContainsKey(address))
+                AddSeries(address);
+            ChartValues<double> Values = (ChartValues<double>)SectionDictionary[address].Values;
             Values.Add(value);
             var first = Values.DefaultIfEmpty(0).FirstOrDefault();
             if (Values.Count > MAX_COUNT - 1) Values.Remove(first);
@@ -51,7 +51,7 @@ namespace UsartChart
         public Func<double, string> Formatter { get; set; }
 
         const uint MAX_COUNT = 1000;
-        private Dictionary<string, LineSeries> SectionDictionary = new Dictionary<string, LineSeries>();
+        private readonly Dictionary<uint, LineSeries> SectionDictionary = new Dictionary<uint, LineSeries>();
         public SeriesCollection Series { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
