@@ -34,7 +34,7 @@ namespace UsartChart
         public SectionType Type { get; set; }
         public string Name { get; set; }
         public uint Addr { get; set; }
-        public ushort Size { get; set; }
+        public byte Size { get; set; }
 
         public static SectionType TypeParse(string s)
         {

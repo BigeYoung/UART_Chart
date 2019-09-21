@@ -1,4 +1,5 @@
 ﻿using LiveCharts;
+using LiveCharts.Defaults;
 using LiveCharts.Wpf;
 using LiveCharts.Wpf.Converters;
 using System;
@@ -20,6 +21,7 @@ namespace UsartChart
             ColorIndex = 0;
         }
 
+        static DateTime LaunchTime = DateTime.Now;
         public void Update(Dictionary<Section, double> dataDictionary)
         {
             foreach (var data in dataDictionary)
@@ -28,11 +30,13 @@ namespace UsartChart
                 var value = data.Value;
                 if (!SeriesDictionary.ContainsKey(section))
                     AddSeries(section);
-                ChartValues<double> Values = (ChartValues<double>)SeriesDictionary[section].Values;
-                Values.Add(value);
-                var first = Values.DefaultIfEmpty(0).FirstOrDefault();
+                ChartValues<ObservablePoint> Values = (ChartValues<ObservablePoint>)SeriesDictionary[section].Values;
+                var first = Values.First();
                 if (Values.Count > MAX_COUNT - 1) Values.Remove(first);
-                if (Values.Count < MAX_COUNT) Values.Add(value);
+                if (Values.Count < MAX_COUNT) Values.Add(new ObservablePoint(
+                    (DateTime.Now - LaunchTime).TotalSeconds,
+                    value
+                    ));
             }
             if (dataDictionary.Count != SeriesDictionary.Count)
             {
@@ -44,37 +48,40 @@ namespace UsartChart
             }
         }
 
-        private static byte[][] RGBs = new byte[][]
+        private static readonly byte[][] RGBs = new byte[][]
         {
+            new byte[3]{72,72,72},
             new byte[3]{255,0,0},
-            new byte[3]{0,255,0},
+            new byte[3]{255,128,0},
+            new byte[3]{200,200,0},
+            new byte[3]{0,200,0},
+            new byte[3]{0,200,200},
             new byte[3]{0,0,255},
+            new byte[3]{200,0,200},
+            new byte[3]{128,128,128},
+            new byte[3]{128,0,0},
             new byte[3]{128,128,0},
-            new byte[3]{128,0,128},
+            new byte[3]{0,128,0},
             new byte[3]{0,128,128},
-            new byte[3]{0,64,192},
-            new byte[3]{0,192,64},
-            new byte[3]{192,0,64},
-            new byte[3]{255,255,0},
-            new byte[3]{255,0,255},
-            new byte[3]{0,255,255},
-            new byte[3]{64,0,192},
-            new byte[3]{64,192,0},
-            new byte[3]{192,64,0}
+            new byte[3]{0,0,128}
         };
         static int ColorIndex;
-        private static Brush getNextColor()
+        private static Brush GetNextColor()
         {
             ColorIndex++;
-            return new SolidColorBrush(Color.FromRgb(RGBs[ColorIndex % 15][0], RGBs[ColorIndex % 15][1], RGBs[ColorIndex % 15][2]));
+            return new SolidColorBrush(Color.FromRgb(
+                RGBs[ColorIndex % RGBs.Length][0],
+                RGBs[ColorIndex % RGBs.Length][1],
+                RGBs[ColorIndex % RGBs.Length][2]
+                ));
         }
 
         public void AddSeries(Section section)
         {
             SeriesDictionary.Add(section, new LineSeries
             {
-                Values = new ChartValues<double>(),
-                Stroke = getNextColor(),
+                Values = new ChartValues<ObservablePoint>(),
+                Stroke = GetNextColor(),
                 Fill = Brushes.Transparent,
                 StrokeThickness = .5,
                 PointGeometry = null,

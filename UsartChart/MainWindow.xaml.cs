@@ -134,7 +134,7 @@ namespace UsartChart
                             var section = new Section()
                             {
                                 Addr = Convert.ToUInt32(s_list[0], 16),
-                                Size = Convert.ToUInt16(s_list[1], 16),
+                                Size = Convert.ToByte(s_list[1], 16),
                                 Name = s_list[2],
                                 Type = type
                             };

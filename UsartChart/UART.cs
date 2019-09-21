@@ -45,14 +45,30 @@ namespace UsartChart
             m_SerialPort.WriteLine(System.Text.Encoding.UTF8.GetString(data));
         }
 
-        public static void Subscript(uint address, ushort size)
+        public static void Subscript(uint address, byte size)
         {
             //TODO 订阅对应地址
+            byte[] reAddr = BitConverter.GetBytes(address);
+            Array.Reverse(reAddr);
+            byte[] data = new byte[16];
+            data[0] = 1;
+            data[1] = 1;
+            data[2] = size;
+            Array.Copy(reAddr, 0, data, 3, 4);
+            m_SerialPort.Write(data, 0, 16);
             MessageBox.Show("0x" + address.ToString("X") + " has been subscript.");
         }
         public static void Unsubscript(uint address)
         {
             //TODO 取消订阅对应地址
+            byte[] reAddr = BitConverter.GetBytes(address);
+            Array.Reverse(reAddr);
+            byte[] data = new byte[16];
+            data[0] = 1;
+            data[1] = 5;
+            data[2] = 0;
+            Array.Copy(reAddr, 0, data, 3, 4);
+            m_SerialPort.Write(data, 0, 16);
             MessageBox.Show("0x" + address.ToString("X") + " has been unsubscript.");
         }
 
