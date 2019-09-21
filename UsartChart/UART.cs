@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace UsartChart
 {
@@ -81,15 +82,14 @@ namespace UsartChart
                 try
                 {
                     if (value)
-                    {
                         m_SerialPort.Open();
-                    }
                     else
                         m_SerialPort.Close();
                 }
                 catch (Exception e)
                 {
                     MessageBox.Show(e.Message, "串口" + (value ? "打开" : "关闭") + "失败");
+                    RefreshAvailblePort();
                 }
                 OnPropertyChanged();
             }
@@ -112,23 +112,27 @@ namespace UsartChart
         {
             while (true)
             {
-                var available_ports = SerialPort.GetPortNames();
-                if (!AvailablePorts.SequenceEqual(available_ports))
-                {
-                    foreach (var item in available_ports)
-                    {
-                        if (!AvailablePorts.Contains(item))
-                            AvailablePorts.Add(item);
-                    }
-                    foreach (var item in AvailablePorts)
-                    {
-                        if (!available_ports.Contains(item))
-                            AvailablePorts.Remove(item);
-                    }
-                    OnPropertyChanged("AvailablePorts");
-                }
                 OnPropertyChanged("IsOpen");
                 await Task.Delay(200);
+            }
+        }
+
+        public void RefreshAvailblePort()
+        {
+            var available_ports = SerialPort.GetPortNames();
+            if (!AvailablePorts.SequenceEqual(available_ports))
+            {
+                foreach (var item in available_ports)
+                {
+                    if (!AvailablePorts.Contains(item))
+                        AvailablePorts.Add(item);
+                }
+                foreach (var item in AvailablePorts)
+                {
+                    if (!available_ports.Contains(item))
+                        AvailablePorts.Remove(item);
+                }
+                OnPropertyChanged("AvailablePorts");
             }
         }
 
@@ -136,6 +140,20 @@ namespace UsartChart
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    [ValueConversion(typeof(bool), typeof(bool))]
+    public class Not : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return !(bool)value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return !(bool)value;
         }
     }
 }

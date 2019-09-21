@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UsartChart"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="1280">
     <Window.Resources>
@@ -19,6 +20,7 @@
         </Style>
         <local:TypeHighlight x:Key="TypeHightlight"/>
         <local:TypeName x:Key="TypeName"/>
+        <local:Not x:Key="Not"/>
     </Window.Resources>
     <DockPanel>
         <Grid Background="LightGray" DockPanel.Dock="Bottom" Height="28">
@@ -34,7 +36,8 @@
                 <DockPanel.Resources>
                     <DataTemplate x:Key="SectionTemplate">
                         <StackPanel Orientation="Horizontal">
-                            <Button Command="{Binding SubscriptCMD}" Content="订阅" Padding="3"/>
+                            <Button Command="{Binding SubscriptCMD}" Content="订阅" Padding="3"
+                                    IsEnabled="{Binding IsChecked, ElementName=PortOpen}"/>
                             <TextBlock Margin="5,0" VerticalAlignment="Center"
                                    Text="{Binding Type, Converter={StaticResource TypeName}}" 
                                    Foreground="{Binding Type,Converter={StaticResource TypeHightlight}}"/>
@@ -55,7 +58,7 @@
                         <local:UART x:Name="m_UART"/>
                     </StackPanel.DataContext>
                     <DockPanel DockPanel.Dock="Top">
-                        <ToggleButton DockPanel.Dock="Right" IsChecked="{Binding serial_port.IsOpen}">
+                        <ToggleButton x:Name="PortOpen" DockPanel.Dock="Right" IsChecked="{Binding IsOpen}">
                             <ToggleButton.Resources>
                                 <Style TargetType="ToggleButton" x:Key="{x:Type ToggleButton}">
                                     <Setter Property="Padding" Value="5"/>
@@ -74,16 +77,20 @@
                         <Label Style="{StaticResource h1}">串口</Label>
                     </DockPanel>
                     <Label Margin="0,10,0,0">串口号</Label>
-                    <ComboBox x:Name="PortName" Height="28" VerticalContentAlignment="Center" 
-                                ItemsSource="{Binding AvailablePorts}" Text="{Binding PortName, Mode=OneWayToSource}"></ComboBox>
+                    <ComboBox x:Name="PortName" Height="28" VerticalContentAlignment="Center" DropDownOpened="PortName_DropDownOpened"
+                              IsEnabled="{Binding IsChecked, ElementName=PortOpen, Converter={StaticResource Not}}"
+                              ItemsSource="{Binding AvailablePorts}" Text="{Binding PortName, Mode=OneWayToSource}"></ComboBox>
                     <Label Margin="0,10,0,0">波特率</Label>
-                    <TextBox Height="28" VerticalContentAlignment="Center" Text="{Binding BaudRate}"></TextBox>
+                    <TextBox Height="28" VerticalContentAlignment="Center" Text="{Binding BaudRate}"
+                             IsEnabled="{Binding IsChecked, ElementName=PortOpen, Converter={StaticResource Not}}"></TextBox>
                 </StackPanel>
                 <DockPanel Margin="10" x:Name="Subscription">
                     <DockPanel.Resources>
                         <DataTemplate x:Key="SectionTemplate">
                             <StackPanel Orientation="Horizontal">
-                                <Button Command="{Binding Key.UnsubscriptCMD}" Content="取消" Padding="3"/>
+                                <Ellipse Margin="0,0,5,0" Width="10" Height="10" Fill="{Binding Value.Stroke}" VerticalAlignment="Center"></Ellipse>
+                                <Button Command="{Binding Key.UnsubscriptCMD}" Content="取消" Padding="3"
+                                        IsEnabled="{Binding IsChecked, ElementName=PortOpen}"/>
                                 <TextBlock Margin="5,0" VerticalAlignment="Center"
                                    Text="{Binding Key.Type, Converter={StaticResource TypeName}}" 
                                    Foreground="{Binding Key.Type,Converter={StaticResource TypeHightlight}}"/>

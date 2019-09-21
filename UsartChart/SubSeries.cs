@@ -17,6 +17,7 @@ namespace UsartChart
         {
             Series = new SeriesCollection();
             Formatter = x => x.ToString("F0");
+            ColorIndex = 0;
         }
 
         public void Update(Dictionary<Section, double> dataDictionary)
@@ -43,14 +44,40 @@ namespace UsartChart
             }
         }
 
+        private static byte[][] RGBs = new byte[][]
+        {
+            new byte[3]{255,0,0},
+            new byte[3]{0,255,0},
+            new byte[3]{0,0,255},
+            new byte[3]{128,128,0},
+            new byte[3]{128,0,128},
+            new byte[3]{0,128,128},
+            new byte[3]{0,64,192},
+            new byte[3]{0,192,64},
+            new byte[3]{192,0,64},
+            new byte[3]{255,255,0},
+            new byte[3]{255,0,255},
+            new byte[3]{0,255,255},
+            new byte[3]{64,0,192},
+            new byte[3]{64,192,0},
+            new byte[3]{192,64,0}
+        };
+        static int ColorIndex;
+        private static Brush getNextColor()
+        {
+            ColorIndex++;
+            return new SolidColorBrush(Color.FromRgb(RGBs[ColorIndex % 15][0], RGBs[ColorIndex % 15][1], RGBs[ColorIndex % 15][2]));
+        }
+
         public void AddSeries(Section section)
         {
             SeriesDictionary.Add(section, new LineSeries
             {
                 Values = new ChartValues<double>(),
+                Stroke = getNextColor(),
                 Fill = Brushes.Transparent,
                 StrokeThickness = .5,
-                PointGeometry = null
+                PointGeometry = null,
             });
             Series.Add(SeriesDictionary[section]);
             OnPropertyChanged("SeriesDictionary");

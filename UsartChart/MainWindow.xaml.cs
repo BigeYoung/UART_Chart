@@ -30,6 +30,11 @@ namespace UsartChart
             UART.m_SerialPort.DataReceived += SerialPort_DataRecieved;
             m_Chart.DataContext = m_SubSeries;
             Subscription.DataContext = m_SubSeries;
+
+            for (uint i = 0; i < 32; i++)
+            {
+                m_SubSeries.AddSeries(new Section() { Addr = i, Name = "Happy"+i.ToString(), Type = SectionType.Double, Size = 10 });
+            }
         }
 
         public SubSeries m_SubSeries = new SubSeries();
@@ -145,5 +150,9 @@ namespace UsartChart
             }
         }
 
+        private void PortName_DropDownOpened(object sender, EventArgs e)
+        {
+            ((UART)((ComboBox)sender).DataContext).RefreshAvailblePort();
+        }
     }
 }
