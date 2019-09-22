@@ -77,8 +77,12 @@ namespace UsartChart
             }
         }
     }
-
-
+    public class SectionData
+    {
+        public string Name;
+        public uint Addr;
+        public double Value;
+    }
 
     [ValueConversion(typeof(SectionType), typeof(SolidColorBrush))]
     public class TypeHighlight : IValueConverter

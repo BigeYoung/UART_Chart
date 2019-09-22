@@ -7,7 +7,7 @@
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="MainWindow" Height="720" Width="1280">
+        Title="华南虎串口助手" Height="720" Width="1280">
     <Window.Resources>
         <Style TargetType="Label" x:Key="h1">
             <Setter Property="FontSize" Value="16"/>
@@ -23,8 +23,8 @@
         <local:Not x:Key="Not"/>
     </Window.Resources>
     <DockPanel>
-        <Grid Background="LightGray" DockPanel.Dock="Bottom" Height="28">
-            <TextBlock VerticalAlignment="Center" Margin="10,0"></TextBlock>
+        <Grid x:Name="StatusBar" Background="LightGray" DockPanel.Dock="Bottom" Height="28">
+            <TextBlock x:Name="StatusInfo" VerticalAlignment="Center" Margin="10,0"></TextBlock>
         </Grid>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -88,23 +88,20 @@
                     <DockPanel.Resources>
                         <DataTemplate x:Key="SectionTemplate">
                             <StackPanel Orientation="Horizontal">
-                                <Ellipse Margin="0,0,5,0" Width="10" Height="10" Fill="{Binding Value.Stroke}" VerticalAlignment="Center"></Ellipse>
-                                <Button Command="{Binding Key.UnsubscriptCMD}" Content="取消" Padding="3"
+                                <Ellipse Margin="0,0,5,0" Width="10" Height="10" Fill="{Binding Stroke}" VerticalAlignment="Center"></Ellipse>
+                                <Button Tag="{Binding Tag}" Content="取消" Padding="3" Click="Unsubscribe_Click"
                                         IsEnabled="{Binding IsChecked, ElementName=PortOpen}"/>
-                                <TextBlock Margin="5,0" VerticalAlignment="Center"
-                                   Text="{Binding Key.Type, Converter={StaticResource TypeName}}" 
-                                   Foreground="{Binding Key.Type,Converter={StaticResource TypeHightlight}}"/>
-                                <TextBlock Text="{Binding Key.Name}" VerticalAlignment="Center"/>
+                                <TextBlock Margin="5,0" Text="{Binding Name}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </DataTemplate>
                     </DockPanel.Resources>
                     <Label DockPanel.Dock="Top" Style="{StaticResource h1}">已订阅变量</Label>
-                    <ListBox ItemsSource="{Binding SeriesDictionary}" ItemTemplate="{StaticResource SectionTemplate}"
+                    <ListBox ItemsSource="{Binding Series_Collection}" ItemTemplate="{StaticResource SectionTemplate}"
                              Margin="0,10,0,0"/>
                 </DockPanel>
             </DockPanel>
             <lvc:CartesianChart x:Name="m_Chart" Grid.Row="1" Zoom="X" DisableAnimations="True" Margin="10" Grid.Column="2"
-                                    Series="{Binding Series}" DataTooltip="{x:Null}" Hoverable="False"
+                                    Series="{Binding Series_Collection}" DataTooltip="{x:Null}" Hoverable="False"
                                     MouseEnter="ChartMouseEnter" MouseLeave="ChartMouseLeave" MouseMove="ChartMouseMoving">
                 <lvc:CartesianChart.AxisX>
                     <lvc:Axis x:Name="m_AxisX" LabelFormatter="{Binding Formatter}"/>

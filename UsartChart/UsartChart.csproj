@@ -68,7 +68,6 @@
     <Compile Include="SubSeries.cs" />
     <Compile Include="RlayCommand.cs" />
     <Compile Include="Section.cs" />
-    <Compile Include="Status.cs" />
     <Compile Include="UART.cs" />
   </ItemGroup>
   <ItemGroup>

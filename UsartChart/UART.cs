@@ -30,20 +30,20 @@ namespace UsartChart
             RM_BOARD_3 = 0x03
         };
 
-        private void SerialPort_Operate_Flash(byte board, byte act, byte size, uint addr, ulong dataBuf = 0)
-        {
-            byte[] reAddr = BitConverter.GetBytes(addr);
-            Array.Reverse(reAddr);
-            byte[] reDataBuf = BitConverter.GetBytes(dataBuf);
-            Array.Reverse(reDataBuf);
-            byte[] data = new byte[16];
-            data[0] = board;
-            data[1] = act;
-            data[2] = size;
-            Array.Copy(reAddr, 0, data, 3, 4);
-            Array.Copy(reDataBuf, 0, data, 7, 8);
-            m_SerialPort.WriteLine(System.Text.Encoding.UTF8.GetString(data));
-        }
+        //private void SerialPort_Operate_Flash(byte board, byte act, byte size, uint addr, ulong dataBuf = 0)
+        //{
+        //    byte[] reAddr = BitConverter.GetBytes(addr);
+        //    Array.Reverse(reAddr);
+        //    byte[] reDataBuf = BitConverter.GetBytes(dataBuf);
+        //    Array.Reverse(reDataBuf);
+        //    byte[] data = new byte[16];
+        //    data[0] = board;
+        //    data[1] = act;
+        //    data[2] = size;
+        //    Array.Copy(reAddr, 0, data, 3, 4);
+        //    Array.Copy(reDataBuf, 0, data, 7, 8);
+        //    m_SerialPort.WriteLine(System.Text.Encoding.UTF8.GetString(data));
+        //}
 
         public static void Subscript(uint address, byte size)
         {
@@ -105,6 +105,7 @@ namespace UsartChart
                     MessageBox.Show(e.Message, "串口" + (value ? "打开" : "关闭") + "失败");
                     RefreshAvailblePort();
                 }
+                OnPropertyChanged("BaudRate");
                 OnPropertyChanged();
             }
         }

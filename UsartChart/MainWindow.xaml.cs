@@ -1,6 +1,4 @@
-﻿using LiveCharts;
-using LiveCharts.Helpers;
-using LiveCharts.Wpf;
+﻿using LiveCharts.Wpf;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -8,11 +6,10 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -30,19 +27,14 @@ namespace UsartChart
             UART.m_SerialPort.DataReceived += SerialPort_DataRecieved;
             m_Chart.DataContext = m_SubSeries;
             Subscription.DataContext = m_SubSeries;
-
-            for (uint i = 0; i < 32; i++)
-            {
-                m_SubSeries.AddSeries(new Section() { Addr = i, Name = "Happy" + i.ToString(), Type = SectionType.Double, Size = 10 });
-            }
         }
 
         public SubSeries m_SubSeries = new SubSeries();
 
         private void SerialPort_DataRecieved(object sender, SerialDataReceivedEventArgs e)
         {
-            byte[] serialData = System.Text.Encoding.UTF8.GetBytes(UART.m_SerialPort.ReadExisting());
-            Dictionary<Section, double> data_dict = new Dictionary<Section, double>();
+            byte[] serialData = Encoding.UTF8.GetBytes(UART.m_SerialPort.ReadExisting());
+            List<SectionData> data_list = new List<SectionData>();
 
             for (int i = 0; (i + 1) * 16 <= serialData.Length; i++)
             {
@@ -50,45 +42,78 @@ namespace UsartChart
                 {
                     //TODO 解析...
                     uint addr = BitConverter.ToUInt32(serialData, 3 + i * 16);
-                    var section = sections.First((x) => x.Addr == addr);
-                    //TODO 根据 section.Type 解析
-                    double value = 0;
-                    switch (section.Type)
+                    try
                     {
-                        case SectionType.INT8:
-                            //TODO value = BitConverter.???(serialData, 8 + i * 16);
-                            break;
-                        case SectionType.INT16:
-                            value = BitConverter.ToInt16(serialData, 8 + i * 16);
-                            break;
-                        case SectionType.INT32:
-                            value = BitConverter.ToInt32(serialData, 8 + i * 16);
-                            break;
-                        case SectionType.UINT8:
-                            //TODO value = BitConverter.???(serialData, 8 + i * 16);
-                            break;
-                        case SectionType.UINT16:
-                            value = BitConverter.ToUInt16(serialData, 8 + i * 16);
-                            break;
-                        case SectionType.UINT32:
-                            value = BitConverter.ToUInt32(serialData, 8 + i * 16);
-                            break;
-                        case SectionType.Float:
-                            value = BitConverter.ToSingle(serialData, 8 + i * 16);
-                            break;
-                        case SectionType.Double:
-                            value = BitConverter.ToDouble(serialData, 8 + i * 16);
-                            break;
-                        default:
-                            break;
+                        var section = sections.First((x) => x.Addr == addr);
+                        //TODO 根据 section.Type 解析
+                        double value = 0;
+                        switch (section.Type)
+                        {
+                            case SectionType.INT8:
+                                //TODO value = BitConverter.???(serialData, 8 + i * 16);
+                                break;
+                            case SectionType.INT16:
+                                value = BitConverter.ToInt16(serialData, 8 + i * 16);
+                                break;
+                            case SectionType.INT32:
+                                value = BitConverter.ToInt32(serialData, 8 + i * 16);
+                                break;
+                            case SectionType.UINT8:
+                                //TODO value = BitConverter.???(serialData, 8 + i * 16);
+                                break;
+                            case SectionType.UINT16:
+                                value = BitConverter.ToUInt16(serialData, 8 + i * 16);
+                                break;
+                            case SectionType.UINT32:
+                                value = BitConverter.ToUInt32(serialData, 8 + i * 16);
+                                break;
+                            case SectionType.Float:
+                                value = BitConverter.ToSingle(serialData, 8 + i * 16);
+                                break;
+                            case SectionType.Double:
+                                value = BitConverter.ToDouble(serialData, 8 + i * 16);
+                                break;
+                            default:
+                                break;
+                        }
+                        data_list.Add(new SectionData()
+                        {
+                            Name = section.Name,
+                            Addr = addr,
+                            Value = value
+                        });
                     }
-                    data_dict.Add(section, value);
+                    catch (InvalidOperationException exp)
+                    {
+                        StatusBarPrint(exp.Message + ": 接收到地址为0x" + addr.ToString("X") + "的数据");
+                    }
                 }
             }
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                m_SubSeries.Update(data_dict);
-            });
+
+            if (data_list.Count != 0)
+                Dispatcher.Invoke(() =>
+                {
+                    m_SubSeries.Update(data_list);
+                });
+        }
+
+        public void StatusBarPrint(string s)
+        {
+            void printFunction() => StatusInfo.Text = s;
+            if (Dispatcher.CheckAccess())
+                printFunction();
+            else
+                Dispatcher.Invoke(printFunction);
+        }
+
+
+        public void StatusBarBackground(Brush b)
+        {
+            void printFunction() => StatusInfo.Background = b;
+            if (Dispatcher.CheckAccess())
+                printFunction();
+            else
+                Dispatcher.Invoke(printFunction);
         }
 
         static readonly AxisSection SectionX = new AxisSection()
@@ -164,7 +189,7 @@ namespace UsartChart
                         {
                             string[] s_list = Regex.Split(s, @"\s{2,}");
                             var type = Section.TypeParse(s_list[3]);
-                            if (type == SectionType.UNKNOWN)
+                            if (type == SectionType.UNKNOWN || s_list[2].StartsWith("*"))
                                 continue;
                             var section = new Section()
                             {
@@ -188,6 +213,11 @@ namespace UsartChart
         private void PortName_DropDownOpened(object sender, EventArgs e)
         {
             ((UART)((ComboBox)sender).DataContext).RefreshAvailblePort();
+        }
+
+        private void Unsubscribe_Click(object sender, RoutedEventArgs e)
+        {
+            UART.Unsubscript((uint)((Button)sender).Tag);
         }
     }
 }
