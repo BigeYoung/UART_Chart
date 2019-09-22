@@ -44,20 +44,47 @@ namespace UsartChart
             byte[] serialData = System.Text.Encoding.UTF8.GetBytes(UART.m_SerialPort.ReadExisting());
             Dictionary<Section, double> data_dict = new Dictionary<Section, double>();
 
-            //TODO while(...):
             for (int i = 0; (i + 1) * 16 <= serialData.Length; i++)
             {
                 if (serialData[1 + i * 16] == 2)
                 {
                     //TODO 解析...
-                    uint addr = BitConverter.ToUInt32(serialData, 3 + i * 16); //TODO 读取串口获得
+                    uint addr = BitConverter.ToUInt32(serialData, 3 + i * 16);
                     var section = sections.First((x) => x.Addr == addr);
                     //TODO 根据 section.Type 解析
-                    double value = BitConverter.ToDouble(serialData, 8 + i * 16); //TODO 读取串口获得
+                    double value = 0;
+                    switch (section.Type)
+                    {
+                        case SectionType.INT8:
+                            //TODO value = BitConverter.???(serialData, 8 + i * 16);
+                            break;
+                        case SectionType.INT16:
+                            value = BitConverter.ToInt16(serialData, 8 + i * 16);
+                            break;
+                        case SectionType.INT32:
+                            value = BitConverter.ToInt32(serialData, 8 + i * 16);
+                            break;
+                        case SectionType.UINT8:
+                            //TODO value = BitConverter.???(serialData, 8 + i * 16);
+                            break;
+                        case SectionType.UINT16:
+                            value = BitConverter.ToUInt16(serialData, 8 + i * 16);
+                            break;
+                        case SectionType.UINT32:
+                            value = BitConverter.ToUInt32(serialData, 8 + i * 16);
+                            break;
+                        case SectionType.Float:
+                            value = BitConverter.ToSingle(serialData, 8 + i * 16);
+                            break;
+                        case SectionType.Double:
+                            value = BitConverter.ToDouble(serialData, 8 + i * 16);
+                            break;
+                        default:
+                            break;
+                    }
                     data_dict.Add(section, value);
                 }
             }
-            //TODO endwhile
             Application.Current.Dispatcher.Invoke(() =>
             {
                 m_SubSeries.Update(data_dict);

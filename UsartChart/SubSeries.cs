@@ -31,7 +31,7 @@ namespace UsartChart
                 if (!SeriesDictionary.ContainsKey(section))
                     AddSeries(section);
                 ChartValues<ObservablePoint> Values = (ChartValues<ObservablePoint>)SeriesDictionary[section].Values;
-                var first = Values.First();
+                var first = Values.FirstOrDefault();
                 if (Values.Count > MAX_COUNT - 1) Values.Remove(first);
                 if (Values.Count < MAX_COUNT) Values.Add(new ObservablePoint(
                         (DateTime.Now - LaunchTime).TotalSeconds,
