@@ -49,7 +49,6 @@ namespace UsartChart
         {
             //TODO 订阅对应地址
             byte[] reAddr = BitConverter.GetBytes(address);
-            Array.Reverse(reAddr);
             byte[] data = new byte[16];
             data[0] = 1;
             data[1] = 1;
@@ -62,7 +61,6 @@ namespace UsartChart
         {
             //TODO 取消订阅对应地址
             byte[] reAddr = BitConverter.GetBytes(address);
-            Array.Reverse(reAddr);
             byte[] data = new byte[16];
             data[0] = 1;
             data[1] = 5;

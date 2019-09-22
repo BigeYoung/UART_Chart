@@ -41,18 +41,23 @@ namespace UsartChart
 
         private void SerialPort_DataRecieved(object sender, SerialDataReceivedEventArgs e)
         {
-            UART.m_SerialPort.ReadExisting();
+            byte[] serialData = System.Text.Encoding.UTF8.GetBytes(UART.m_SerialPort.ReadExisting());
             Dictionary<Section, double> data_dict = new Dictionary<Section, double>();
 
             //TODO while(...):
-            //TODO 解析...
-            uint addr = 0x00; //TODO 读取串口获得
-            var section = sections.First((x) => x.Addr == addr);
-            //TODO 根据 section.Type 解析
-            double value = 0.0; //TODO 读取串口获得
-            data_dict.Add(section, value);
+            for (int i = 0; (i + 1) * 16 <= serialData.Length; i++)
+            {
+                if (serialData[1 + i * 16] == 2)
+                {
+                    //TODO 解析...
+                    uint addr = BitConverter.ToUInt32(serialData, 3 + i * 16); //TODO 读取串口获得
+                    var section = sections.First((x) => x.Addr == addr);
+                    //TODO 根据 section.Type 解析
+                    double value = BitConverter.ToDouble(serialData, 8 + i * 16); //TODO 读取串口获得
+                    data_dict.Add(section, value);
+                }
+            }
             //TODO endwhile
-
             m_SubSeries.Update(data_dict);
         }
 
