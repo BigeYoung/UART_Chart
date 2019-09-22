@@ -21,7 +21,7 @@ namespace UsartChart
             ColorIndex = 0;
         }
 
-        static DateTime LaunchTime = DateTime.Now;
+        static readonly DateTime LaunchTime = DateTime.Now;
         public void Update(Dictionary<Section, double> dataDictionary)
         {
             foreach (var data in dataDictionary)
@@ -34,8 +34,8 @@ namespace UsartChart
                 var first = Values.First();
                 if (Values.Count > MAX_COUNT - 1) Values.Remove(first);
                 if (Values.Count < MAX_COUNT) Values.Add(new ObservablePoint(
-                    (DateTime.Now - LaunchTime).TotalSeconds,
-                    value
+                        (DateTime.Now - LaunchTime).TotalSeconds,
+                        value
                     ));
             }
             if (dataDictionary.Count != SeriesDictionary.Count)
@@ -48,7 +48,7 @@ namespace UsartChart
             }
         }
 
-        private static readonly byte[][] RGBs = new byte[][]
+        private static readonly byte[][] RGBs = new byte[][] 
         {
             new byte[3]{72,72,72},
             new byte[3]{255,0,0},

@@ -33,7 +33,7 @@ namespace UsartChart
 
             for (uint i = 0; i < 32; i++)
             {
-                m_SubSeries.AddSeries(new Section() { Addr = i, Name = "Happy"+i.ToString(), Type = SectionType.Double, Size = 10 });
+                m_SubSeries.AddSeries(new Section() { Addr = i, Name = "Happy" + i.ToString(), Type = SectionType.Double, Size = 10 });
             }
         }
 
@@ -58,7 +58,10 @@ namespace UsartChart
                 }
             }
             //TODO endwhile
-            m_SubSeries.Update(data_dict);
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                m_SubSeries.Update(data_dict);
+            });
         }
 
         static readonly AxisSection SectionX = new AxisSection()
